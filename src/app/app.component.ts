@@ -6,6 +6,7 @@ import { I18nService } from '@eui/core';
 import { LANG_PARAM_KEY } from '@eui/core';
 import { HttpClient } from '@angular/common/http';
 
+import { LogService, Logger } from '@eui/core';
 
 
 @Component({
@@ -28,8 +29,9 @@ export class AppComponent implements OnDestroy {
         { label: 'Title label 3', subLabel: 'Subtitle label' },
         { label: 'Title label 4', subLabel: 'Subtitle label' },
     ];
+    title: any;
 
-    constructor(private store: Store<any>,protected i18nService: I18nService,protected http: HttpClient,) {
+    constructor(private store: Store<any>,protected i18nService: I18nService,protected http: HttpClient,private logService: LogService) {
         this.userState = <any>this.store.select(getUserState);
         this.subs.push(this.userState.subscribe((user: UserState) => {
             this.userInfos = { ...user };
@@ -37,8 +39,19 @@ export class AppComponent implements OnDestroy {
         this.i18nService.init();
     }
     ngOnInit() {
-        this.getByLang().subscribe((lang) => {
-        });
+        this.loadInitialData();
+  
+    }
+    private loadInitialData() {
+        this.userState.
+        subscribe((data) => {
+            try {
+                this.title = data.someProperty.title;
+            } catch(e) {
+                this.logService.warn(e.toString());
+            }        
+               
+    });   
     }
     
 
